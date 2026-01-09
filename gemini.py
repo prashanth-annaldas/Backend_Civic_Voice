@@ -3,19 +3,24 @@ import os
 from google import genai
 from PIL import Image
 import io
+from fastapi import HTTPException
 
-# Load environment variables
+# Load env only for local development
 load_dotenv()
 
 API_KEY = os.getenv("GOOGLE_API_KEY")
 
-if not API_KEY:
-    raise RuntimeError("GOOGLE_API_KEY is not set")
-
-client = genai.Client(api_key=API_KEY)
+# Create client only if key exists
+client = genai.Client(api_key=API_KEY) if API_KEY else None
 
 
 def detect_issue(image_bytes: bytes) -> str:
+    if not API_KEY or not client:
+        raise HTTPException(
+            status_code=500,
+            detail="Gemini API key not configured on server"
+        )
+
     image = Image.open(io.BytesIO(image_bytes)).convert("RGB")
 
     prompt = """
@@ -43,7 +48,7 @@ unknown
         return "water_leak"
     elif "light" in text:
         return "street_light"
-    elif "electric_transformer" in text:
+    elif "electric" in text:
         return "electric_transformer"
     else:
         return "unknown"
