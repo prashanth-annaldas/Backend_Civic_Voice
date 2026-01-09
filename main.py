@@ -18,9 +18,6 @@ import uuid
 
 app = FastAPI()
 
-# Create DB tables
-Base.metadata.create_all(bind=engine)
-
 app.add_middleware(
     CORSMiddleware,
     allow_origins=[
