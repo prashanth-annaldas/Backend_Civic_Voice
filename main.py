@@ -8,7 +8,7 @@ from gemini import detect_issue
 from email_service import send_issue_email
 from database import engine, SessionLocal, Base
 from models import Issue, User
-from schemas import RegisterRequest
+from schemas import RegisterRequest, LoginRequest
 from auth_utils import hash_password
 from auth_utils import verify_password
 from pydantic import BaseModel
@@ -74,7 +74,7 @@ def register_user(data: RegisterRequest, db: Session = Depends(get_db)):
     }
 
 @app.post("/login")
-def login_user(data: RegisterRequest, db: Session = Depends(get_db)):
+def login_user(data: LoginRequest, db: Session = Depends(get_db)):
     user = db.query(User).filter(User.email == data.email).first()
 
     if not user:
