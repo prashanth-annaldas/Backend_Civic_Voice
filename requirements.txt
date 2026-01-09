@@ -10,3 +10,5 @@ python-dotenv
 requests
 pillow
 google-genai
+pydantic
+google-generativeai
